@@ -136,7 +136,7 @@ const TOOLS = [
 ]
 
 const server = new Server(
-  { name: "stampui", version: "0.1.0" },
+  { name: "stampui", version: "0.1.1" },
   { capabilities: { tools: {} } }
 )
 

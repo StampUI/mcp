@@ -1,6 +1,6 @@
 {
   "name": "@stampui/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "StampUI MCP server: browse and stamp StampUI blocks from Claude Code, Cursor, and other MCP clients.",
   "license": "MIT",
   "homepage": "https://stampui.com",
