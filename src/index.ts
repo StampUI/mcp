@@ -188,20 +188,31 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 
   if (name === "stamp_block") {
     const { slug, targetDir } = args as { slug?: string; targetDir?: string }
-    const b = slug ? manifests[slug] : undefined
+    const b = slug && Object.hasOwn(manifests, slug) ? manifests[slug] : undefined
     if (!b) return text(`Block '${slug}' not found.`)
     if (!targetDir || !path.isAbsolute(targetDir)) return text("targetDir must be an absolute path.")
+    const root = path.resolve(targetDir)
+    if (!fs.existsSync(path.join(root, "package.json"))) {
+      return text(`No package.json in ${root}. targetDir must be the root of the project to stamp into.`)
+    }
     const resolved = await resolveFiles(b)
     if ("error" in resolved) return text(resolved.error)
-    const written: string[] = []
-    const root = path.resolve(targetDir)
+    // File paths come from the registry manifest: validate every one before
+    // writing anything, so a bad path never leaves a half-written block.
+    const planned: { dest: string; path: string; content: string }[] = []
     for (const f of resolved.files) {
       const dest = path.resolve(root, f.path)
-      // File paths come from the registry manifest; refuse anything that
-      // would resolve outside the target directory.
-      if (dest !== root && !dest.startsWith(root + path.sep)) {
-        return text(`Refusing to write outside targetDir: ${f.path}`)
-      }
+      const safe =
+        typeof f.path === "string" &&
+        /^(components|lib)\/[A-Za-z0-9._\/-]+$/.test(f.path) &&
+        f.path.split("/").every((seg) => seg !== "" && seg !== "." && seg !== "..") &&
+        dest.startsWith(root + path.sep)
+      if (!safe) return text(`Refusing to stamp ${b.slug}: unsafe file path ${JSON.stringify(f.path)}. Nothing was written.`)
+      planned.push({ dest, path: f.path, content: f.content })
+    }
+    const written: string[] = []
+    for (const f of planned) {
+      const dest = f.dest
       fs.mkdirSync(path.dirname(dest), { recursive: true })
       fs.writeFileSync(dest, f.content)
       written.push(f.path)
