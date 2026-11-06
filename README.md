@@ -88,6 +88,7 @@ git clone https://github.com/StampUI/mcp
 cd mcp
 npm install
 npm run build
+npm test             # stdio smoke test (initialize, tools/list, search_blocks)
 # exercise it with the MCP inspector:
 npx @modelcontextprotocol/inspector node dist/index.js
 ```

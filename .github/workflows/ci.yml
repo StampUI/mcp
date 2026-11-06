@@ -22,3 +22,5 @@ jobs:
         run: npm run build
       - name: Check for secrets in build output
         run: npm run check:secrets
+      - name: Stdio smoke test
+        run: npm test

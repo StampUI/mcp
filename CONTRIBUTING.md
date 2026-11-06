@@ -17,7 +17,7 @@ npx @modelcontextprotocol/inspector node dist/index.js   # interactive testing
 - MIT surface only: no pro/commercial block source, no registry secrets, no license keys in code, fixtures, or tests.
 - PRs that add ways to bypass the license check for pro blocks will be closed.
 - New tools or parameters: open an issue first describing the agent workflow they enable.
-- `npm run typecheck` and `npm run build` must pass (CI enforces this).
+- `npm run typecheck`, `npm run build` and `npm test` (stdio smoke test) must pass (CI enforces this).
 - Update README and CHANGELOG when behavior changes.
 
 ## Code of conduct
